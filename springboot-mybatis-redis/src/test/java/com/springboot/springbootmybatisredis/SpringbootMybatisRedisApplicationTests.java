@@ -2,7 +2,10 @@ package com.springboot.springbootmybatisredis;
 
 import com.springboot.springbootmybatisredis.entity.User;
 import com.springboot.springbootmybatisredis.entity.UserMapper;
-import org.junit.Assert;
+import com.springboot.springbootmybatisredis.rabbit.Sender;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@Log4j2
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SpringbootMybatisRedisApplicationTests {
@@ -25,7 +29,10 @@ public class SpringbootMybatisRedisApplicationTests {
     private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    private RedisTemplate<String,User> redisTemplate;
+    private RedisTemplate<String, User> redisTemplate;
+
+    @Autowired
+    private Sender mqSender;
 
     @Test
     @Rollback
@@ -53,7 +60,6 @@ public class SpringbootMybatisRedisApplicationTests {
 
     @Test
     public void testRedisTemplate() {
-
         // 保存对象
         User user = new User("超人", 20);
         redisTemplate.opsForValue().set(user.getName(), user);
@@ -64,10 +70,9 @@ public class SpringbootMybatisRedisApplicationTests {
         user = new User("蜘蛛侠", 40);
         redisTemplate.opsForValue().set(user.getName(), user);
 
-        Assert.assertEquals(20, redisTemplate.opsForValue().get("超人").getAge().longValue());
-        Assert.assertEquals(30, redisTemplate.opsForValue().get("蝙蝠侠").getAge().longValue());
-        Assert.assertEquals(40, redisTemplate.opsForValue().get("蜘蛛侠").getAge().longValue());
-
+        assertEquals(20, redisTemplate.opsForValue().get("超人").getAge().longValue());
+        assertEquals(30, redisTemplate.opsForValue().get("蝙蝠侠").getAge().longValue());
+        assertEquals(40, redisTemplate.opsForValue().get("蜘蛛侠").getAge().longValue());
     }
 
 }
